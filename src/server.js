@@ -1,21 +1,12 @@
-const knex = require("../src/database/index"); // com é /index é opcional
+
 const express = require("express");
-const res = require("express/lib/response");
+//const res = require("express/lib/response");
 const app = express();
 
-app.get("/categorias",(req,res)=>
-{
-    knex.select("*").from("categorias")
-    //.where("categoriaid",3)
-    .then(cats=> cats)
-    .then((results)=>res.json(results))
-    .catch(erro=>console.log(erro))
-    .finally(()=>{
-        knex.destroy();}
-    )
-});
-    
-    
+const routes = require("./routes")
+
+
+app.use(routes);
 
 
 app.listen(3333,()=> console.log("porta 3333"));
@@ -33,5 +24,5 @@ knex.select("*").from("categorias")
 .catch(erro=>console.log(erro))
 .finally(()=>{
     knex.destroy();}
-);
+); 
 */
