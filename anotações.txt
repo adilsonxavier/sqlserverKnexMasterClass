@@ -1,0 +1,10 @@
+npm i knex@latest  express@latest  nodemon@latest 
+npm i nodeno@latest --save-dev
+
+no package.json:
+  "main": "src/server.js",
+   "scripts": {
+    "start ": "nodemon src/server.js"
+  },
+
+  npx knex init  => cria o knexfile.js no raiz
