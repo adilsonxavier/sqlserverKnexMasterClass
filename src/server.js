@@ -14,6 +14,18 @@ const routes = require("./routes")
 app.use(express.json());
 app.use(routes);
 
+
+// 404 not found
+app.use((req,res,next)=>{
+    const error = new Error("Not Found"); // Obs: a classe error está em node_modules e só recebe
+                                        // uma string (mensagem)
+    error.status = 404;     
+    next(error);
+ });
+  // ( a entender melhor ) / com o next(error) acima , automaticamente uma página não
+  // encontrada vai ser tratada no error handler abaixo
+  
+
 // Catch All
 // Vai no fim da pipeline para que peque os erros do que ocorrer antes dele
 app.use((error,req,res,next)=>{   // Normalmente tem os params req,res,e next . Se houver 4 então p
