@@ -35,8 +35,13 @@ module.exports = {
         const {CurrentPage=1,PageSize=5, PalavraChave="" } = req.params; // para o req.params criei rota com param opcional
         //console.log(`pagesize ${PageSize} - currpage ${CurrentPage}`);
 
-        const [count]= await knex("produtosProv").count();
-       // console.log(count[""]);
+        const [count]= await knex("produtosProv")
+        .where("produtosProv.produtoProvNome","like",`%${PalavraChave}%`)
+        .count();
+        // a prop count retorna um array contendo um único objeto com uma única prop sem nome:
+        // [{ '': 8 }]
+        // Com isso eu crio o objeto abaixo para ser incluído no select e retornará o mesmo valor 
+        // em todos os registros pra ser usado no front-end
         const QtdTotalItens = {QtdTotalItens:count[""] };
         console.log(QtdTotalItens);
         const query = knex("produtosProv")
@@ -52,7 +57,10 @@ module.exports = {
         // .where("produtosProv.produtoProvNome","like","%1401%") ;                                                   
 
           console.log(query.toString());  // Imprime o sql gerado
-       
+          
+          // Opcionalmente também posso mandar informações no header
+          res.header("X-Powered-By","Adilson");
+          res.header("X-Total-Count",count[""]);
 
           const results = await query;
 
