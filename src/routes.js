@@ -32,6 +32,10 @@ app.get("/categorias",(req,res)=>
 
 //routes.get("/produtosprov",ProdutosProvController.index);
 routes.get("/produtosprov/:ProdutoProvId?",ProdutosProvController.index); // param opcional
+//api.get(`/produtos/GetProdutosPaginacao/${currentPage2}/${PAGESIZE}/${busca}`)
+routes.get("/produtosprov/GetProdutosPaginacao/:CurrentPage/:PageSize?/:PalavraChave?",
+            ProdutosProvController.GetProdutosPaginacao);
+
 
 routes.post("/produtosprov",ProdutosProvController.create);
 routes.put("/produtosprov/:ProdutoProvId",ProdutosProvController.update);

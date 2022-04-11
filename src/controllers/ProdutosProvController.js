@@ -8,7 +8,9 @@ module.exports = {
         // com o sem a query string.
 
         //const {ProdutoProvId} = req.query;
+    
         const {ProdutoProvId} = req.params; // para o req.params criei rota com param opcional
+       
         const query = knex("produtosProv");
         if(ProdutoProvId){
             query.where("produtoProvId",ProdutoProvId)
@@ -20,18 +22,47 @@ module.exports = {
          // join caterogias on produtosProv.categoriaId = categorias.categoriaId
 
          .select("produtosProv.*","categorias.categoriaNome");
+         
 
-         console.log(query.toString());
+         //console.log(query.toString());  // Imprime o sql gerado
 
          const results = await query;
         //const results = await knex("produtosProv");
         return res.json(results); // com o await acima ele esporeou a busca concluir pra só depois executar
-    },                                // esta linha e retornar o resultado em forma de json
+    },
+    
+    async GetProdutosPaginacao(req,res){
+        const {CurrentPage=1,PageSize=5, PalavraChave="" } = req.params; // para o req.params criei rota com param opcional
+        //console.log(`pagesize ${PageSize} - currpage ${CurrentPage}`);
+
+        const [count]= await knex("produtosProv").count();
+       // console.log(count[""]);
+        const QtdTotalItens = {QtdTotalItens:count[""] };
+        console.log(QtdTotalItens);
+        const query = knex("produtosProv")
+      
+        .limit(PageSize)
+        .offset((CurrentPage-1)* PageSize) // Pega a partir da pag. x uma quantidade PageSize de itens
+
+        query.join("Categorias","produtosProv.categoriaId","=","categorias.categoriaId")
+         .select("produtosProv.*","categorias.categoriaNome",QtdTotalItens)
+         .where("produtosProv.produtoProvNome","like",`%${PalavraChave}%`)
+         .orderBy("produtosProv.produtoProvNome");  /// Sem um order by dá erro de sintaxe
+                                                    /// no sql montado pois precisa dele pro offset
+        // .where("produtosProv.produtoProvNome","like","%1401%") ;                                                   
+
+          console.log(query.toString());  // Imprime o sql gerado
+       
+
+          const results = await query;
+
+        return res.json(results); 
+    },
     async create(req,res,next){
         const {ProdutoProvNome,CategoriaId} = req.body;
        
         try{
-            await knex("produtosProv").insert({ProdutoProvNome,CategoriaId});// tem que passar um objero{} como arqumento do insert
+            await knex("produtosProv").insert({ProdutoProvNome,CategoriaId});// tem que passar um objeto{} como arqumento do insert
             return res.status(201).send("produto prov criado");
         }catch(erro){
             next(erro);
